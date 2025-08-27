@@ -1,0 +1,47 @@
+{
+  "name": "smash-kill-clipper",
+  "version": "1.0.0",
+  "description": "TypeScript CLI tool to extract kill-screen moments from Smash Bros videos",
+  "main": "dist/index.js",
+  "bin": {
+    "smash-clip": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test-image": "ts-node src/test-image.ts",
+    "test-batch": "ts-node src/test-batch.ts",
+    "detect": "ts-node src/detect-only.ts",
+    "generate": "ts-node src/generate-video.ts",
+    "analyze-ui": "ts-node src/analysis/ui-analysis.ts",
+    "test": "jest",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "smash",
+    "video",
+    "editing",
+    "kill-screen",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "commander": "^11.1.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "fs-extra": "^11.2.0",
+    "sharp": "^0.32.6"
+  },
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.24",
+    "@types/fs-extra": "^11.0.4",
+    "@types/glob": "^8.1.0",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.10.6",
+    "jest": "^29.7.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
