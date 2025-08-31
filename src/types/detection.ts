@@ -7,6 +7,7 @@ export interface DetectionProject {
     beforeSeconds: number;
     afterSeconds: number;
     frameRate: number;
+    scaleWidth: number;
   };
   statistics: {
     totalFrames: number;

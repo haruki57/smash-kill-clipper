@@ -21,7 +21,7 @@ export class VideoProcessor {
     }
   }
 
-  async extractFrames(videoPath: string, outputDir: string): Promise<string[]> {
+  async extractFrames(videoPath: string, outputDir: string, scaleWidth: number = 1280): Promise<string[]> {
     await this.ensureTempDirectory();
     const frameDir = path.join(this.tempDir, 'frames');
     await fs.mkdir(frameDir, { recursive: true });
@@ -29,8 +29,16 @@ export class VideoProcessor {
     return new Promise((resolve, reject) => {
       const framePaths: string[] = [];
       
+      // 解像度スケーリング: アスペクト比維持して幅を指定サイズに
+      const videoFilters = [
+        'fps=5',
+        `scale=${scaleWidth}:-2`  // 幅を指定、高さは自動計算（偶数に丸める）
+      ];
+      
+      console.log(`🔧 フレーム抽出設定: ${scaleWidth}px幅にスケーリング`);
+      
       ffmpeg(videoPath)
-        .outputOptions(['-vf', 'fps=5'])
+        .outputOptions(['-vf', videoFilters.join(',')])
         .output(path.join(frameDir, 'frame_%04d.png'))
         .on('end', async () => {
           try {
@@ -39,6 +47,7 @@ export class VideoProcessor {
               .filter(f => f.endsWith('.png'))
               .sort()
               .map(f => path.join(frameDir, f));
+            console.log(`✅ ${sortedFiles.length}フレームを抽出完了 (${scaleWidth}px幅)`);
             resolve(sortedFiles);
           } catch (error) {
             reject(error);

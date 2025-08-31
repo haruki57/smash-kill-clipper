@@ -23,6 +23,7 @@ program
   .option('-a, --after <seconds>', 'Seconds to include after kill-screen (default: 2)', '2')
   .option('--min-detections <value>', 'Minimum consecutive detections (default: 2)', '2')
   .option('--save-images', 'Save detected kill-screen images to output directory')
+  .option('--scale-width <pixels>', 'Scale frame width for faster processing (default: 1280)', '1280')
   .action(async (input: string, options: any) => {
     try {
       await detectOnly(input, options);
@@ -43,13 +44,14 @@ async function detectOnly(inputPath: string, options: any): Promise<void> {
   const beforeSeconds = parseFloat(options.before);
   const afterSeconds = parseFloat(options.after);
   const minDetections = parseInt(options.minDetections);
+  const scaleWidth = parseInt(options.scaleWidth);
   
   const outputPath = options.output || inputPath.replace(/\.[^/.]+$/, '_detections.json');
   
   try {
     // フレーム抽出
-    console.log('📹 動画からフレームを抽出中...');
-    const framePaths = await videoProcessor.extractFrames(inputPath, 'temp/frames');
+    console.log(`📹 動画からフレームを抽出中... (${scaleWidth}px幅にスケーリング)`);
+    const framePaths = await videoProcessor.extractFrames(inputPath, 'temp/frames', scaleWidth);
     console.log(`✅ ${framePaths.length} フレームを抽出しました`);
 
     // 検出実行
@@ -125,7 +127,8 @@ async function detectOnly(inputPath: string, options: any): Promise<void> {
         confidenceThreshold,
         beforeSeconds,
         afterSeconds,
-        frameRate: 5
+        frameRate: 5,
+        scaleWidth
       },
       statistics: {
         totalFrames: framePaths.length,
